@@ -1,0 +1,234 @@
+"                  -------------------------
+"                  | Yaragos IDEA VIM 配置  |
+"                  -------------------------
+"_____________________________________________________________
+" 设置 -> 快捷键 -> 插件 -> IdeaVim -> vim -> 添加键盘快捷键 -> Alt+逗号
+"-- 查看所有的action --" :actionlist
+"-- 调用action --" :action {ACTION_NAME}<CR>
+"Find more examples here: https://jb.gg/share-ideavimrc
+"=============================================================
+" 基础键位说明
+"=============================================================
+" M->cmd, A->option, C->control
+" <ESC> - escape, <BS> - backspace
+" 设置leader 键位
+let mapleader = "\<space>"
+"=============================================================
+" base setting
+"=============================================================
+" 垂直滚动时保留5行
+set scrolloff=5
+" 水平滚动时保留5字符
+set sidescrolloff=5
+"设置行号
+set number relativenumber
+"禁用错误提示音
+set visualbell
+set noerrorbells
+noremap <SPACE> <Nop>
+
+inoremap jk <Esc>
+noremap <C-[> <Esc>
+"noremap <  10zh
+"noremap >  10zl
+noremap H ^
+noremap L $
+nnoremap <SPACE> <Nop>
+" Map vim marks to IDEA global marks
+set ideamarks
+" 当“on”时，一些命令将光标移动到该行的第一个非空白处。 关闭时，光标将保留在同一列中（如果可能）
+set startofline=on
+" Smart join for J | 按下大写 J 时，会使用行连接功能（IDE 的功能），比如去除下方空行或连接当前行时可使用
+set ideajoin
+
+set history=200
+set keep-english-in-normal-and-restore-in-insert
+
+"=============================================================
+""Plugins settings
+"=============================================================
+set highlightedyank
+let g:highlightedyank_highlight_duration = "600"
+let g:highlightedyank_highlight_color = "rgba(160, 160, 160, 155)"
+set argtextobj
+set surround
+set easymotion
+set NERDTree
+nnoremap <leader>e :NERDTreeFocus<CR>
+nnoremap <leader>e :NERDTreeFocus<CR>
+set multiple-cursors
+" - start:      `<C-n>` start multicursor and add a virtual cursor + visual selection on the match
+"   + next:   `<C-n>` add a new virtual cursor + visual selection on the next match
+"   + skip:   `<C-x>` skip the next match
+"   + prev:   `<C-p>` remove current virtual cursor + visual selection and go back on previous match
+" - select all: `<A-n>` start muticursor and directly select all matches
+
+"=============================================================
+""Search | Replace
+"=============================================================
+set incsearch              " Highlight while searching with / or ?.
+set hlsearch               " Keep matches highlighted.
+set ignorecase smartcase   " 搜索时忽略大小写,智能匹配
+set wrapscan               " Searches wrap around end-of-file.
+nnoremap <Esc> :nohlsearch<CR> " 清除高亮
+nnoremap ; :nohlsearch<CR> " 清除高亮
+"visual 模式 下 按* 号 搜索 光标选中的内容(对已选中的内容进行查找)
+vnoremap * "ry/<C-R>r<CR>
+nnoremap <leader>/ :action Find<CR>
+nnoremap <leader>? :action Replace<CR>
+
+"=============================================================
+""copy and paste
+"=============================================================
+set clipboard+=unnamed
+set clipboard+=ideaput
+"vnoremap p pgvy
+vnoremap p :action $Paste<CR>
+"noremap <C-c> :action $Copy<CR>
+"inoremap <C-v> <ESC>:action $Paste<CR>i
+noremap <leader>p "0p
+noremap <leader>P "0P
+
+"=============================================================
+""window navigation
+"=============================================================
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-h> <C-w>h
+noremap <C-l> <C-w>l
+noremap <leader>x :close<CR>
+noremap \| :action SplitVertically<CR>
+noremap \\ :action SplitHorizontally<CR>
+noremap <c--> :action UnsplitAll<CR>
+noremap <c-=> :action MaximizeEditorInSplit<CR>
+noremap <c-x> :action HideAllWindows<CR>
+
+"=============================================================
+"UI
+"=============================================================
+nnoremap <Leader>zz :action ToggleZenMode<CR>
+"list window opt
+nnoremap <Leader>lw :action ActiveToolwindowGroup<CR>
+" terminal
+nnoremap <leader>t :action ActivateTerminalToolWindow<CR>
+
+"=============================================================
+"Menu | Show | List
+"=============================================================
+" 重构
+noremap <leader>rl :action Refactorings.QuickListPopupAction<CR>
+noremap <leader>rn :action Rename<CR>
+" 展示用法
+nmap <leader>fu :action FindUsages<CR>
+nmap <leader>su :action ShowUsages<CR>
+" VSC
+nmap <leader>lv :action Vcs.QuickListPopupAction<CR>
+" list
+nnoremap <leader>lb :action BuildMenu<CR>
+nnoremap <leader>lc :action CodeMenu<CR>
+nnoremap <leader>lf :action FindMenuGroup<CR>
+nnoremap <leader>ls :action ScopeViewPopupMenu<CR>
+nnoremap <leader>la :action GotoAction<CR>
+"=============================================================
+"Jump | Goto | Find
+"=============================================================
+" 标签页跳转
+nnoremap [t :action PreviousTab<CR>
+nnoremap ]t :action NextTab<CR>
+nnoremap <Tab> :action PreviousTab<CR>
+nnoremap <S-Tab> :action NextTab<CR>
+" 错误跳转
+nnoremap [e :action GotoPreviousError<CR>
+nnoremap ]e :action GotoNextError<CR>
+nnoremap [u :action GotoPrevElementUnderCaretUsage<CR>
+nnoremap ]u :action GotoNextElementUnderCaretUsage<CR>
+nnoremap [o :action PreviousOccurence<CR>
+nnoremap ]o :action NextOccurence<CR>
+" 函数/方法的上下跳转
+nnoremap [[ :action MethodUp<CR>
+nnoremap ]] :action MethodDown<CR>
+" 修改的跳转
+nnoremap [c :action JumpToLastChange<CR>
+nnoremap ]c :action JumpToNextChange<CR>
+
+nnoremap gT :action TextSearchAction<CR>
+nnoremap go :action GotoSuperMethod<CR>
+nnoremap gd :action GotoDeclaration<CR>
+nnoremap gD :action GotoTypeDeclaration<CR>
+" goto impl | 查看方法实现（好用）
+nnoremap gi :action QuickImplementations<CR>
+nnoremap gI :action GotoImplementation<CR>
+nnoremap <leader>ff :action GotoFile<CR>
+nnoremap <leader>fp :action FindInPath<CR>
+
+"=============================================================
+"Edit settings
+"=============================================================
+nnoremap zj o<ESC>
+nnoremap zk O<ESC>
+noremap <C-j> :action MoveLineDown<CR>
+noremap <C-k> :action MoveLineUp<CR>
+
+"=============================================================
+function! Invert(calledFromVisual)
+  let antonyms = ['true', 'false', 'after', 'before', 'start', 'end', 'left', 'right', 'first', 'last',
+                 \'True', 'False', 'After', 'Before', 'Start', 'End', 'Left', 'Right', 'First', 'Last']
+
+  if a:calledFromVisual
+    normal gv"wy
+  else
+    normal "wyiw
+  endif
+  let wordUnderCaret = @w
+
+  let eraseWord = a:calledFromVisual ? 'gvc' : 'ciw'
+  let count = 0
+  while (count < len(antonyms))
+    if (antonyms[count] ==# wordUnderCaret)
+      let antonym = (count % 2 ==? 0) ? antonyms[count + 1] : antonyms[count - 1]
+      execute 'normal ' .. eraseWord .. antonym
+      break
+    endif
+    let count += 1
+  endwhile
+endfunction
+
+nnoremap gX :set opfunc=Redact<CR>g@
+nnoremap gx :set opfunc=function('Redact')<CR>g@
+nnoremap gy :set opfunc={arg -> execute "normal `[v`]rx"}<CR>g@
+function! Redact(type)
+    execute "normal `[v`]rx"
+endfunction
+
+nnoremap ! :call Invert(0)<CR>
+vnoremap ! :<C-u>call Invert(1)<CR>
+
+"=============================================================
+" 默认键位配置
+"=============================================================
+" IDE
+sethandler <C-A> a:ide
+sethandler <C-B> a:ide
+sethandler <C-C> a:ide
+sethandler <C-D> a:ide
+sethandler <C-E> a:ide
+sethandler <C-F> a:ide
+sethandler <C-M> a:ide
+sethandler <C-N> a:ide
+sethandler <C-P> a:ide
+sethandler <C-Q> a:ide
+sethandler <C-S> a:ide
+sethandler <C-U> a:ide
+sethandler <C-V> n-v:vim i:ide
+
+" VIM
+sethandler <C-J> a:vim
+sethandler <C-K> a:vim
+sethandler <C-L> a:vim
+sethandler <C-R> a:vim
+sethandler <C-I> a:vim
+sethandler <C-T> a:vim
+sethandler <C-W> a:vim
+sethandler <C-O> a:vim
+
+"=============================================================
