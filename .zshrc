@@ -68,7 +68,7 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias lh='ls -lh'
 
-alias dot='chezmoi'
+alias dot='yadm'
 
 # --------------- mappings -------------------
 bindkey -v
