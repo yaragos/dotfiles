@@ -65,7 +65,7 @@ noremap ; :nohl<CR>
 
 """copy and paste""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vnoremap * "ry/<C-R>r<CR>
-set clipboard+=unnamed
+set clipboard=unnamedplus
 set mouse=a
 noremap <leader>p "0p
 noremap <leader>P "0P

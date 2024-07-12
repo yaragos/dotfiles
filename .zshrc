@@ -52,8 +52,8 @@ zplug load
 # ---------------- Plugin config ----------------
 bindkey -M vicmd 'k' history-substring-search-up
 bindkey -M vicmd 'j' history-substring-search-down
-bindkey '\EOA' history-substring-search-up # up
-bindkey '\EOB' history-substring-search-down # down
+bindkey '\e[5~' history-substring-search-up # Page Up
+bindkey '\e[6~' history-substring-search-down # Page Down
 # bindkey "$terminfo[kcuu1]" history-substring-search-up # up
 # bindkey "$terminfo[kcud1]" history-substring-search-down # down
 
@@ -68,23 +68,31 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias lh='ls -lh'
 
-alias dot='yadm'
+if command -v yadm >/dev/null 2>&1; then
+  alias dot='yadm'
+  if command -v lazygit >/dev/null 2>&1; then
+    alias lazydot='yadm enter lazygit'
+  fi
+fi
 
 # --------------- mappings -------------------
+# vi mode
 bindkey -v
-# bindkey '\e[1~' beginning-of-line # Home
-# bindkey '\e[4~' end-of-line # End
-bindkey '\e[H' beginning-of-line # Home
-bindkey '\e[F' end-of-line # End
-case $TERM in (xterm*)
-bindkey '\EOH' beginning-of-line # Home
-bindkey '\EOF' end-of-line # End
+bindkey "jk" vi-cmd-mode
+bindkey -a "H" vi-first-non-blank
+bindkey -a "L" vi-end-of-line
+
+# Home and End keys
+case $TERM in
+    xterm*|rxvt*)
+        bindkey '\e[H' beginning-of-line     # Home
+        bindkey '\e[F' end-of-line           # End
+        ;;
 esac
 
+# Delete, Insert keys
 bindkey '\e[3~' delete-char # Delete
-bindkey '\e[6~' end-of-history # Page Down
-bindkey '\e[2~' redisplay # Insert
-bindkey '\e[5~' insert-last-word # Page Up
+bindkey '\e[2~' overwrite-mode # Insert
 
 # -------------- development environment ----------------
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
@@ -98,8 +106,11 @@ ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_V
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # ++++++++ nvm
-# 
 # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 export PATH="/home/linuxbrew/.linuxbrew/opt/mysql@5.7/bin:$PATH"
+
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd)"
+fi
