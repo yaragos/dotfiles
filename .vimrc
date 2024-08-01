@@ -1,9 +1,12 @@
 """"""""""""""""""""""""""""""""""""
 ""    Yazid Lynn's vim configs    ""
 """"""""""""""""""""""""""""""""""""
+
+" To use fzf in Vim
+set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
+
 nnoremap <SPACE> <Nop>
 let mapleader=" "
-nnoremap <leader>r :source ~/.vimrc<CR>
 """base setting""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Don't use Ex mode, use Q for formatting
 map Q gq
@@ -17,7 +20,23 @@ noremap L $
 
 "noremap J :m '>+1<CR>gv=gv
 "noremap K :m '<-2<CR>gv=gv
-nnoremap K a<CR>
+"nnoremap K a<CR>
+
+" save
+nnoremap ;w <cmd>w<CR>
+
+" move beginning of line
+inoremap <C-b> <ESC>^i
+" move end of line
+inoremap <C-e> <End>
+" move left
+inoremap <C-h> <Left>
+" move right
+inoremap <C-l> <Right>
+" move down
+inoremap <C-j> <Down>
+" move up
+inoremap <C-k> <Up>
 
 set nocompatible           " 与vi不兼容
 set noerrorbells novisualbell
@@ -43,16 +62,14 @@ set cursorline             " Find the current line quickly.
 set nowrap                 " Don't wrap long lines
 set display     =lastline  " Show as much as possible of the last line.
 set list                   " Show non-printable characters.
-if has('multi_byte') && &encoding ==# 'utf-8'
-  let &listchars = 'tab:▸ ,extends:❯,precedes:❮,nbsp:±'
-else
-  let &listchars = 'tab:> ,extends:>,precedes:<,nbsp:.'
-endif
+set listchars=tab:»\ ,trail:·,nbsp:␣
+" set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
+
 """edit quickly""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set autoindent             " 自动缩进
 set softtabstop=2 shiftwidth=2 shiftround " 设置tab缩进，缩进宽度，成倍缩进
 set backspace=indent,eol,start  " Make backspace work as you would expect.
-noremap <C-s> :w!<CR>
+noremap <C-s> <cmd>w!<CR>
 nnoremap zj o<Esc>
 nnoremap zk O<Esc>
 """search operation""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -61,7 +78,7 @@ set hlsearch               " Keep matches highlighted.
 set ignorecase smartcase   " 搜索时忽略大小写,智能匹配
 set wrapscan               " Searches wrap around end-of-file.
 " 清除高亮
-noremap ; :nohl<CR>
+noremap <Esc> <cmd>nohl<CR>
 
 """copy and paste""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vnoremap * "ry/<C-R>r<CR>
@@ -78,10 +95,20 @@ noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
-noremap \ <C-w>s
-noremap \| <C-w>v
-noremap \- <C-w>v
+
+noremap <leader>\| <C-w>v
+noremap <leader>- <C-w>s
+
 noremap <leader>x :close<CR>
+
+" 增加/减少窗口高度
+nnoremap <C-Up> :resize +1<CR>
+nnoremap <C-Down> :resize -1<CR>
+
+" 增加/减少窗口宽度
+nnoremap <C-Left> :vertical resize -1<CR>
+nnoremap <C-Right> :vertical resize +1<CR>
+
 """tag/buffer operation""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 noremap ]b :bn<CR>
 noremap [b :bp<CR>
@@ -90,16 +117,6 @@ noremap ]t gt
 noremap <Tab> :bn<CR>
 noremap <S-Tab> :bp<CR>
 
-""" development settings """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" nnoremap gX :set opfunc=Redact<CR>g@
-" nnoremap gx :set opfunc=function('Redact')<CR>g@
-" nnoremap gy :set opfunc={arg -> execute "normal `[v`]rx"}<CR>g@
-" function! Redact(type)
-"     execute "normal `[v`]rx"
-" endfunction
-"""about file"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"filetype plugin indent on  " Load plugins according to detected filetype.
-"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " fish shell is not very compatible to other shells and unexpectedly
 " breaks things that use 'shell'.

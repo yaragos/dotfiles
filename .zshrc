@@ -1,6 +1,8 @@
 # >>>   :<startline>,<endline>s/^/# /    <<<
 # >>>   :<startline>,<endline>s/^# //    <<<
-
+function is_exist() {
+  command -v "$1" >/dev/null 2>&1
+}
 # ---------------- proxy --------------------
 function set_proxy() {
   export http_proxy="http://127.0.0.1:7897/"
@@ -20,7 +22,22 @@ set_proxy
 if [ -f "$HOME/.exports" ]; then
     . "$HOME/.exports"
 fi
-# -------------------------------------
+# ++++++++ brew ++++++++
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# -------- brew install -------------------
+# z #
+. /home/linuxbrew/.linuxbrew/etc/profile.d/z.sh
+
+# mysql #
+export PATH="/home/linuxbrew/.linuxbrew/opt/mysql@5.7/bin:$PATH"
+
+# fnm #
+eval "$(fnm env --use-on-cd)"
+
+# fzf #
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
 
 # ------------>>>    zplug    <<<-------------
 if [[ ! -d ~/.zplug ]];then
@@ -60,20 +77,46 @@ bindkey '\e[6~' history-substring-search-down # Page Down
 # ---------------- History ------------------
 setopt HIST_IGNORE_DUPS # 不保存重复指令
 
-# --------------- Aliases -------------------
+# --------------- Aliases and Functions -------------------
 alias grep='grep --color=auto'
-alias ls='ls --color=auto'
-alias l='ls -CF'
+# better ls
+if is_exist eza; then
+  alias ls='eza --icons=always'
+else
+  alias ls='ls --color=auto'
+fi
+alias l='ls -F'
 alias ll='ls -alF'
-alias la='ls -A'
-alias lh='ls -lh'
+alias la='ls -a'
 
-if command -v yadm >/dev/null 2>&1; then
+# manage dotfiles
+if is_exist yadm; then
   alias dot='yadm'
-  if command -v lazygit >/dev/null 2>&1; then
+  if is_exist lazygit; then
     alias lazydot='yadm enter lazygit'
   fi
 fi
+# 实现当调用`blog PAGE`时，执行`hugo new post/PAGE/index.md`
+if is_exist hugo; then
+  function blog() {
+    local blog_name="$1"
+    if [[ "$blog_name" == "" ]]; then
+      echo "请输入博客文章名称"
+      return 1
+    fi
+    hugo new "post/$blog_name/index.md"
+  }
+fi
+
+# 清理缓存
+function clear_cache() {
+  # 检查是否以 sudo 身份执行
+  if [[ $EUID -eq 0 ]]; then
+    echo "请勿使用 sudo 执行此函数!"
+    exit 1
+  fi
+  eval "sync; sudo sysctl vm.drop_caches=1"
+}
 
 # --------------- mappings -------------------
 # vi mode
@@ -102,15 +145,6 @@ ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_V
 # export SDKMAN_DIR="$HOME/.sdkman"
 # [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-# ++++++++ brew
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
 # ++++++++ nvm
 # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
-export PATH="/home/linuxbrew/.linuxbrew/opt/mysql@5.7/bin:$PATH"
-
-if command -v fnm >/dev/null 2>&1; then
-  eval "$(fnm env --use-on-cd)"
-fi
