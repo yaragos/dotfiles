@@ -1,14 +1,8 @@
-# >>>   :<startline>,<endline>s/^/# /    <<<
-# >>>   :<startline>,<endline>s/^# //    <<<
+# >>>   Yaragos's zsh configure    <<<
 function is_exist() {
   command -v "$1" >/dev/null 2>&1
 }
-# --------------- mappings -------------------
-# vi mode
-bindkey -v
-bindkey "jk" vi-cmd-mode
-bindkey -a "H" vi-first-non-blank
-bindkey -a "L" vi-end-of-line
+# --------------- | mappings | -------------------
 # Make sure that the terminal is in application mode when zle is active, since
 # only then values from $terminfo are valid
 if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
@@ -21,6 +15,32 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
   zle -N zle-line-init
   zle -N zle-line-finish
 fi
+# Cursor style
+function zle-keymap-select {
+	if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+		echo -ne '\e[1 q'
+	elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
+		echo -ne '\e[5 q'
+  fi
+}
+zle -N zle-keymap-select
+
+# vi mode
+bindkey -v
+bindkey "jk" vi-cmd-mode
+bindkey -M vicmd "H" vi-first-non-blank
+bindkey -M vicmd "L" vi-end-of-line
+# Edit the current command line in $EDITOR
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey -M vicmd 'vv' edit-command-line
+
+bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
+# bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
+bindkey ' ' magic-space                               # [Space] - don't do history expansion
+# file rename magick, use <Esc>m
+bindkey "^[m" copy-prev-shell-word
+
 # [PageUp] - Up a line of history
 if [[ -n "${terminfo[kpp]}" ]]; then
   bindkey -M emacs "${terminfo[kpp]}" up-line-or-history
@@ -107,20 +127,7 @@ bindkey -M emacs '^[[1;5D' backward-word
 bindkey -M viins '^[[1;5D' backward-word
 bindkey -M vicmd '^[[1;5D' backward-word
 
-bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
-# bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
-bindkey ' ' magic-space                               # [Space] - don't do history expansion
-
-# Edit the current command line in $EDITOR
-autoload -U edit-command-line
-zle -N edit-command-line
-# bindkey '^e' edit-command-line
-bindkey -M vicmd 'vv' edit-command-line
-
-# file rename magick, use <Esc>m
-bindkey "^[m" copy-prev-shell-word
-
-# ---------------- History ------------------
+# ---------------- | History | ------------------
 ## History file configuration
 [ -z "$HISTFILE" ] && HISTFILE="$HOME/.zsh_history"
 [ "$HISTSIZE" -lt 50000 ] && HISTSIZE=50000
@@ -134,7 +141,7 @@ setopt hist_ignore_space      # ignore commands that start with space
 setopt hist_verify            # show command with history expansion to user before running it
 setopt share_history          # share command history data
 #
-# ---------------- proxy --------------------
+# ---------------- | proxy | --------------------
 function set_proxy() {
   export http_proxy="http://127.0.0.1:7897/"
   export https_proxy="http://127.0.0.1:7897/"
@@ -149,7 +156,7 @@ function unset_proxy() {
 }
 set_proxy
 
-# ---------------- env ----------------
+# ---------------- | env | ----------------
 # Add my custom porfile
 if [ -f "$HOME/.exports" ]; then
     . "$HOME/.exports"
@@ -171,34 +178,28 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
+# Load a few important annexes, without Turbo (this is currently required for annexes)
 zinit light-mode for \
     zdharma-continuum/zinit-annex-as-monitor \
     zdharma-continuum/zinit-annex-bin-gem-node \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
-# 语法高亮
+# syntax highlight
 zinit ice lucid wait='0'
 zinit light zsh-users/zsh-syntax-highlighting
-# 自动建议 && 补全
+# auto-suggestion && completion
 zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
-# zinit ice lucid
-# zinit light zsh-users/zsh-history-substring-search
 zinit ice lucid blockf
 zinit light zsh-users/zsh-completions
 zinit ice lucid wait="0"
 zinit light Aloxaf/fzf-tab
 # OMZ
-# zinit snippet OMZ::lib/completion.zsh
-# zinit snippet OMZ::lib/history.zsh
-# zinit snippet OMZ::lib/key-bindings.zsh
-zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-# 使用 <Esc><Esc> 快速添加 sudo
-zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 zinit ice lucid wait='1'
 zinit snippet OMZ::plugins/git/git.plugin.zsh
+zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
+# Add `sudo` with <Esc><Esc> 
+zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 # theme
 zinit snippet OMZ::lib/theme-and-appearance.zsh
 zinit snippet OMZ::lib/git.zsh
@@ -208,15 +209,11 @@ zinit snippet OMZ::themes/ys.zsh-theme
 #
 ### End of Zinit's installer chunk
 #
-# ---------------- Plugins config ----------------
+# ---------------- | Plugins config | ----------------
 # bindkey -M vicmd 'k' history-substring-search-up
 # bindkey -M vicmd 'j' history-substring-search-down
-# bindkey '\e[5~' history-substring-search-up # Page Up
-# bindkey '\e[6~' history-substring-search-down # Page Down
-# bindkey "$terminfo[kcuu1]" history-substring-search-up # up
-# bindkey "$terminfo[kcud1]" history-substring-search-down # down
 
-# -------- brew install -------------------
+# -------- | brew install | -------------------
 # z #
 . /home/linuxbrew/.linuxbrew/etc/profile.d/z.sh
 
@@ -230,7 +227,7 @@ eval "$(fnm env --use-on-cd)"
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
 
-# --------------- Aliases and Functions -------------------
+# --------------- | Aliases and Functions | -------------------
 alias grep='grep --color=auto'
 # better ls
 if is_exist eza; then
@@ -275,11 +272,11 @@ function clear_cache() {
   eval "sync; sudo sysctl vm.drop_caches=1"
 }
 
-# -------------- development environment ----------------
+# -------------- | Development Environment | ----------------
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
 
 # ++++++++ sdkman
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 # export SDKMAN_DIR="$HOME/.sdkman"
 # [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
@@ -288,3 +285,5 @@ ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_V
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 #
 
+# ++++++++ gvm
+[[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"

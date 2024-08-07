@@ -48,14 +48,14 @@ set keep-english-in-normal-and-restore-in-insert
 ""Plugins settings
 "=============================================================
 set highlightedyank
-let g:highlightedyank_highlight_duration = "600"
+let g:highlightedyank_highlight_duration = "300"
 let g:highlightedyank_highlight_color = "rgba(160, 160, 160, 155)"
 set argtextobj
 set surround
 set easymotion
 set NERDTree
-nnoremap <leader>e :NERDTreeFocus<CR>
-nnoremap <leader>e :NERDTreeFocus<CR>
+nnoremap <C-e> :NERDTreeFocus<CR>
+nnoremap <leader>e :NERDTreeToggle<CR>
 set multiple-cursors
 " - start:      `<C-n>` start multicursor and add a virtual cursor + visual selection on the match
 "   + next:   `<C-n>` add a new virtual cursor + visual selection on the next match

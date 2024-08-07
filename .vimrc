@@ -15,19 +15,24 @@ set noerrorbells novisualbell
 set number relativenumber
 " set virtualedit=onemore
 set history=200
+if !isdirectory($HOME."/.vim/undo")
+    call mkdir($HOME."/.vim/undo", "p", 0770)
+endif
+set undofile
+set undodir=$HOME/.vim/undo//
 filetype plugin indent on
 syntax on
 set scrolloff=5
-set sidescrolloff=5
+set sidescrolloff=10
+set signcolumn="yes"
 if &term =~ "xterm"
     let &t_SI = "\<Esc>[6 q"
     let &t_SR = "\<Esc>[3 q"
     let &t_EI = "\<Esc>[2 q"
 endif
-""" 状态栏
+""" status bar
 " set showmode showcmd laststatus=2
-""" 显示当前行列
-set ruler
+" set ruler
 """ Auto reload changed files
 set autoread
 """ Only highlight the first 200 columns.
@@ -72,8 +77,8 @@ vnoremap p pgvy
 " Don't use Ex mode, use Q for formatting
 map Q gq
 inoremap jk <Esc>
-noremap H ^
-noremap L $
+map H ^
+map L $
 nnoremap zj o<Esc>
 nnoremap zk O<Esc>
 " save
@@ -81,13 +86,13 @@ nnoremap ;w <cmd>w<CR>
 noremap <C-s> <cmd>w!<CR>
 " clean highlight
 nnoremap <silent> <Esc> <cmd>nohl<CR>
-" actions in insert mode
-inoremap <C-b> <ESC>^i
-inoremap <C-e> <End>
-inoremap <C-h> <Left>
-inoremap <C-l> <Right>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
+" move lines | >>> but can't working
+" nmap <A-j> <cmd>m .+1<cr>==
+" nmap <A-k> <cmd>m .-2<cr>==
+" imap <A-j> <esc><cmd>m .+1<cr>==gi
+" imap <A-k> <esc><cmd>m .-2<cr>==gi
+" vmap <A-j> :m '>+1<cr>gv=gv
+" vmap <A-k> :m '<-2<cr>gv=gv
 " move window
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
@@ -111,8 +116,6 @@ noremap ]b <cmd>bn<CR>
 noremap [b <cmd>bp<CR>
 
 " vnoremap * "ry/<C-R>r<CR>
-"noremap J :m '>+1<CR>gv=gv
-"noremap K :m '<-2<CR>gv=gv
 
 """ [[ vim-Plug ]] ====================================
 " PlugInstall PlugUpdate PlugUpgrade PlugStatus PlugClean[!]
@@ -126,39 +129,59 @@ call plug#begin()
   Plug 'preservim/nerdtree'
   Plug 'vim-airline/vim-airline'
   Plug 'bling/vim-bufferline'
-  Plug 'vim-airline/vim-airline-themes'
+  Plug 'pixelastic/vim-undodir-tree'
+  Plug 'terryma/vim-expand-region'
+  Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+  " Plug 'vim-airline/vim-airline-themes'
   Plug 'tpope/vim-sensible'
-  Plug 'jiangmiao/auto-pairs' " Provide some default settings
+  Plug 'jiangmiao/auto-pairs' " Provide some base settings
   Plug 'tpope/vim-commentary'
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'machakann/vim-highlightedyank'
   Plug 'easymotion/vim-easymotion'
   Plug 'justinmk/vim-sneak'
+  Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+  Plug 'morhetz/gruvbox'
+  Plug 'nordtheme/vim'
 call plug#end()
 
-""" UI =================================================
-" vim-airline, vim-airline-theme, bufferline
+""" [[ UI ]] ===========================================
+" vim-airline, colorscheme, bufferline
+if (has('termguicolors'))
+  set termguicolors
+endif
+set bg=dark
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'default'
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='angr'
-" colorscheme purify
+let g:material_terminal_italics = 1
+" 'default' | 'palenight' | 'ocean' | 'lighter' | 'darker' |
+let g:material_theme_style = 'palenight'
+colorscheme material
 
 """ [[ Edit conveniently ]] ============================
+" +@ yank highlight
 let g:highlightedyank_highlight_duration = 200
 " highlight HighlightedyankRegion ctermbg=yellow guibg=yellow
+" +@ quick jump
 map <Leader> <Plug>(easymotion-prefix)
 let g:sneak#label = 1
 " let g:sneak#s_next = 1
-
+" +@ Completion
+set completeopt=menu,menuone,noselect
+" +@ multi cursor
+" Default press <Ctrl-n> to open Plug(visual-multi), I replace it.
+let g:VM_maps = {}
+let g:VM_maps['Find Under']         = '<C-m>'    " replace C-n
+let g:VM_maps['Find Subword Under'] = '<C-m>'    " replace visual C-n
+"
 """ [[ NERDTree ]] =====================================
+" Commands: NERDTree, NERDTreeFocus
 let g:NERDTreeFileLines = 1
 nnoremap <leader>e :NERDTreeToggle<CR>
 nnoremap <C-e> :NERDTreeFind<CR>
-"  :NERDTreeFocus
-"  :NERDTree
 " Start NERDTree when Vim starts with a directory argument.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists('s:std_in') |
@@ -172,3 +195,6 @@ autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTa
 " then press <c-f> 和 <c-b> to cycle between modes.
 
 """ [[ autocmd ]] ================================
+" Set the cursor to a block shape when entering Vim
+autocmd VimEnter * silent exec "!echo -ne '\e[1 q'"
+
