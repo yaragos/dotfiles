@@ -239,6 +239,8 @@ alias l='ls -F'
 alias ll='ls -alF'
 alias la='ls -a'
 
+alias ra='ranger'
+
 # nvim 
 alias lzvim='NVIM_APPNAME="lazyvim" nvim'
 alias anvim='NVIM_APPNAME="astronvim" nvim'
@@ -283,7 +285,6 @@ ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_V
 # ++++++++ nvm
 # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-#
 
 # ++++++++ gvm
 [[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
