@@ -3,7 +3,10 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -------------------- appearance --------------------
+-- config.default_cursor_style = 'BlinkingBlock'
+config.enable_scroll_bar = true
 config.color_scheme = 'tokyonight_moon'
+-- config.color_scheme = 'Nord (Gogh)'
 -- window transparency
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 10
