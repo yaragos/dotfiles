@@ -36,17 +36,15 @@ set_proxy
 
 # ---------------- | env | ----------------
 # Add my custom porfile
-if [ -f "$HOME/.exports" ]; then
-    . "$HOME/.exports"
+if [ -f "$HOME/.zprofile" ]; then
+    . "$HOME/.zprofile"
 fi
 # ++++++++ brew ++++++++
+export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-# To activate these completions
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
-  autoload -Uz compinit
-  compinit
-fi
 
 # # ------------>>>    zinit    <<<-------------
 ### Added by Zinit's installer
@@ -68,16 +66,11 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-bin-gem-node \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
-# syntax highlight
-zinit ice lucid wait='0'
-zinit light zsh-users/zsh-syntax-highlighting
-# auto-suggestion
-zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
-zinit light zsh-users/zsh-autosuggestions
+
 # OMZ
 zinit ice lucid wait='1'
 zinit snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
-# Add `sudo` with <Esc><Esc> 
+# Add `sudo` with press `<Esc><Esc>`
 zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
 #
 ### End of Zinit's installer chunk
@@ -97,11 +90,26 @@ eval "$(fnm env --use-on-cd)"
 # fzf #
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
-zinit ice lucid wait="0"
-zinit light Aloxaf/fzf-tab
 
 # starship #
 eval "$(starship init zsh)"
+
+# ------------- | Better command line | ---------------------
+# syntax highlight
+zinit ice lucid wait='0'
+zinit light zsh-users/zsh-syntax-highlighting
+# auto-suggestion
+zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
+zinit light zsh-users/zsh-autosuggestions
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=yellow,bold"
+zinit ice lucid wait="0"
+zinit light Aloxaf/fzf-tab
+# To activate these completions
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+  autoload -Uz compinit
+  compinit
+fi
 
 # --------------- | Aliases and Functions | -------------------
 alias grep='grep --color=auto'
