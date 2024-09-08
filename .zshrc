@@ -88,13 +88,28 @@ export PATH="/home/linuxbrew/.linuxbrew/opt/mysql@5.7/bin:$PATH"
 eval "$(fnm env --use-on-cd)"
 
 # fzf #
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+# In order to use `fzf-history-widget`, 
+# it must he loaded before `zsh-vi-mode`.
+# source <(fzf --zsh)
 
 # starship #
 eval "$(starship init zsh)"
 
 # ------------- | Better command line | ---------------------
+# zsh-vi-mode
+function zvm_config() {
+  ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
+  ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+}
+function zvm_after_init() {
+  bindkey -M vicmd "H" vi-first-non-blank
+  bindkey -M vicmd "L" vi-end-of-line
+  bindkey ' ' magic-space             # [Space] - don't do history expansion
+  bindkey "\C-j" copy-prev-shell-word # file rename magick, use <C-m>
+  source <(fzf --zsh)
+}
+zinit ice depth=1
+zinit light jeffreytse/zsh-vi-mode
 # syntax highlight
 zinit ice lucid wait='0'
 zinit light zsh-users/zsh-syntax-highlighting
@@ -102,7 +117,7 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit ice lucid wait="0" atload='_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=yellow,bold"
-zinit ice lucid wait="0"
+zinit ice lucid wait
 zinit light Aloxaf/fzf-tab
 # To activate these completions
 if type brew &>/dev/null; then
@@ -125,9 +140,8 @@ alias la='ls -a'
 
 alias ra='ranger'
 
-# nvim 
-alias lzvim='NVIM_APPNAME="lazyvim" nvim'
-alias anvim='NVIM_APPNAME="astronvim" nvim'
+# my nvim
+alias mvim='NVIM_APPNAME="mvim" nvim'
 
 # manage dotfiles
 if is_exist yadm; then
@@ -147,7 +161,6 @@ if is_exist hugo; then
     hugo new "post/$blog_name/index.md"
   }
 fi
-
 # 清理缓存
 function clear_cache() {
   # 检查是否以 sudo 身份执行
@@ -157,7 +170,15 @@ function clear_cache() {
   fi
   eval "sync; sudo sysctl vm.drop_caches=1"
 }
-
+# Change the current working directory when exiting Yazi.
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
 # -------------- | Development Environment | ----------------
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
 

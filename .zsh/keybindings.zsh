@@ -10,31 +10,11 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
   zle -N zle-line-init
   zle -N zle-line-finish
 fi
-# Cursor style
-function zle-keymap-select {
-	if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
-		echo -ne '\e[1 q'
-	elif [[ ${KEYMAP} == main ]] || [[ ${KEYMAP} == viins ]] || [[ ${KEYMAP} = '' ]] || [[ $1 = 'beam' ]]; then
-		echo -ne '\e[5 q'
-  fi
-}
-zle -N zle-keymap-select
-
-# vi mode
-bindkey -v
-bindkey "jk" vi-cmd-mode
-bindkey -M vicmd "H" vi-first-non-blank
-bindkey -M vicmd "L" vi-end-of-line
-# Edit the current command line in $EDITOR
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd 'vv' edit-command-line
 
 bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
-# bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
 bindkey ' ' magic-space                               # [Space] - don't do history expansion
-# file rename magick, use <Esc>m
-bindkey "^[m" copy-prev-shell-word
+# file rename magick, use <C-j>
+bindkey "\C-j" copy-prev-shell-word
 
 # [PageUp] - Up a line of history
 if [[ -n "${terminfo[kpp]}" ]]; then

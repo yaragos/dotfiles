@@ -101,6 +101,7 @@ show_always = true
 [hostname]
 ssh_only = false
 ssh_symbol = " "
+style = 'bold green'
 format =  '@ [$ssh_symbol$hostname]($style) '
 disabled = false
 

@@ -5,8 +5,8 @@ local config = wezterm.config_builder()
 -------------------- appearance --------------------
 -- config.default_cursor_style = 'BlinkingBlock'
 config.enable_scroll_bar = true
-config.color_scheme = "tokyonight_moon"
--- config.color_scheme = 'Nord (Gogh)'
+-- config.color_scheme = "tokyonight_moon"
+config.color_scheme = "Catppuccin Mocha"
 -- window transparency
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 10
@@ -73,13 +73,18 @@ config.leader = { key = "Space", mods = mod.SUPER_REV, timeout_milliseconds = 10
 config.keys = {
 	{ key = "q", mods = "LEADER", action = act.QuitApplication },
 	{ key = "F11", mods = "NONE", action = act.ToggleFullScreen },
+	-- Pane
 	{ key = "h", mods = mod.SUPER, action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 	{ key = "v", mods = mod.SUPER, action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{ key = "q", mods = mod.SUPER, action = act.CloseCurrentPane({ confirm = false }) },
-	{ key = "LeftArrow", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Left") },
-	{ key = "RightArrow", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Right") },
-	{ key = "UpArrow", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Up") },
-	{ key = "DownArrow", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Down") },
+	{ key = "z", mods = mod.SUPER, action = act.TogglePaneZoomState },
+	{ key = "LeftArrow", mods = mod.SUPER, action = act.ActivatePaneDirection("Left") },
+	{ key = "RightArrow", mods = mod.SUPER, action = act.ActivatePaneDirection("Right") },
+	{ key = "UpArrow", mods = mod.SUPER, action = act.ActivatePaneDirection("Up") },
+	{ key = "DownArrow", mods = mod.SUPER, action = act.ActivatePaneDirection("Down") },
+	-- Tab
+	{ key = "LeftArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(1) },
 	{ key = "[", mods = mod.SUPER, action = act.ActivateTabRelative(-1) },
 	{ key = "]", mods = mod.SUPER, action = act.ActivateTabRelative(1) },
 	{ key = "[", mods = mod.SUPER_REV, action = act.MoveTabRelative(-1) },
@@ -89,11 +94,11 @@ config.keys = {
 	-- CTRL+SHIFT+W to close current Tab.
 	{ key = "w", mods = "CTRL|SHIFT", action = act.CloseCurrentTab({ confirm = false }) },
 	-- CTRL+SHIFT+N to create new window.
-	{ key = "n", mods = "SHIFT|CTRL", action = act.SpawnWindow },
+	{ key = "n", mods = "CTRL|SHIFT", action = act.SpawnWindow },
 }
 
 -- Quickly jump between tabs
-for i = 1, 8 do
+for i = 1, 9 do
 	table.insert(config.keys, {
 		key = tostring(i),
 		mods = mod.SUPER,
