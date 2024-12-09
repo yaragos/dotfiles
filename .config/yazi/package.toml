@@ -1,0 +1,5 @@
+[plugin]
+deps = [{ use = "yazi-rs/plugins:jump-to-char", rev = "63beb75" }, { use = "yazi-rs/plugins:hide-preview", rev = "63beb75" }]
+
+[flavor]
+deps = []
